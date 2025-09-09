@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang-key="pageTitle">Phân tích Nghị quyết 70-NQ/TW về An ninh Năng lượng Quốc gia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            max-height: 350px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 320px;
+            }
+        }
+        .gemini-modal {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .gemini-modal.active {
+            display: flex;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0ea5e9;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .active-nav {
+            color: #0ea5e9;
+            font-weight: 600;
+        }
+        .tab-button.active {
+            color: #0ea5e9;
+            border-bottom-color: #0ea5e9;
+        }
+        .lang-switch button.active {
+            color: #0ea5e9;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header id="header" class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+            <div class="flex items-center">
+                <a href="https://tulieuvankien.dangcongsan.vn/Uploads/2025/9/7/3/nqtw70.signed.pdf" target="_blank" rel="noopener noreferrer" class="text-xl font-bold text-sky-900 hover:text-sky-600 transition-colors">
+                    <span data-lang-key="resolutionTitle">Nghị quyết 70-NQ/TW</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#challenges" class="text-slate-600 hover:text-sky-600 transition-colors nav-link" data-lang-key="navChallenges">Thách thức</a>
+                <a href="#goals" class="text-slate-600 hover:text-sky-600 transition-colors nav-link" data-lang-key="navGoals">Mục tiêu</a>
+                <a href="#solutions" class="text-slate-600 hover:text-sky-600 transition-colors nav-link" data-lang-key="navSolutions">Giải pháp NQ70</a>
+                <a href="#implementation" class="text-slate-600 hover:text-sky-600 transition-colors nav-link" data-lang-key="navImplementation">Tổ chức Thực hiện</a>
+                <a href="#expert-solutions" class="text-slate-600 hover:text-sky-600 transition-colors nav-link" data-lang-key="navExpertSolutions">Giải pháp Chuyên gia</a>
+                <a href="#ai-analysis" class="text-slate-600 hover:text-sky-600 transition-colors nav-link" data-lang-key="navAIAnalysis">Phân tích AI</a>
+                 <div class="lang-switch flex items-center space-x-2 pl-4 border-l">
+                    <button id="lang-vi" class="active">VIE</button>
+                    <span>|</span>
+                    <button id="lang-en">ENG</button>
+                </div>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-slate-600 hover:text-sky-600 focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white">
+            <a href="#challenges" class="block py-2 px-4 text-sm text-slate-600 hover:bg-sky-50 nav-link" data-lang-key="navChallengesMobile">Thách thức</a>
+            <a href="#goals" class="block py-2 px-4 text-sm text-slate-600 hover:bg-sky-50 nav-link" data-lang-key="navGoalsMobile">Mục tiêu</a>
+            <a href="#solutions" class="block py-2 px-4 text-sm text-slate-600 hover:bg-sky-50 nav-link" data-lang-key="navSolutionsMobile">Giải pháp NQ70</a>
+            <a href="#implementation" class="block py-2 px-4 text-sm text-slate-600 hover:bg-sky-50 nav-link" data-lang-key="navImplementationMobile">Tổ chức Thực hiện</a>
+            <a href="#expert-solutions" class="block py-2 px-4 text-sm text-slate-600 hover:bg-sky-50 nav-link" data-lang-key="navExpertSolutionsMobile">Giải pháp Chuyên gia</a>
+            <a href="#ai-analysis" class="block py-2 px-4 text-sm text-slate-600 hover:bg-sky-50 nav-link" data-lang-key="navAIAnalysisMobile">Phân tích AI</a>
+            <div class="lang-switch flex items-center space-x-2 p-4 border-t">
+                <button id="lang-vi-mobile" class="active">VIE</button>
+                <span>|</span>
+                <button id="lang-en-mobile">ENG</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="overview" class="relative bg-sky-900 text-white py-20 md:py-32">
+            <div class="absolute inset-0 bg-black opacity-30"></div>
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4" data-lang-key="heroTitle">An ninh Năng lượng Quốc gia</h1>
+                <p class="max-w-3xl mx-auto text-lg md:text-xl text-sky-200 mb-8" data-lang-key="heroSubtitle">
+                    Phân tích toàn diện Nghị quyết 70-NQ/TW: Từ chiến lược, mục tiêu đến các giải pháp đột phá cho ngành năng lượng Việt Nam hướng tới tương lai bền vững.
+                </p>
+                <a href="#challenges" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 inline-block" data-lang-key="heroButton">
+                    Khám phá Phân tích
+                </a>
+            </div>
+        </section>
+
+        <section id="challenges" class="py-16 md:py-24 bg-slate-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-sky-900" data-lang-key="challengesTitle">Bối cảnh & Thách thức</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600" data-lang-key="challengesSubtitle">Ngành năng lượng đã đạt nhiều thành tựu nhưng vẫn đối mặt với những vấn đề cố hữu, đòi hỏi các giải pháp mang tính chiến lược.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-teal-400">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-4" data-lang-key="achievementsTitle">Thành tựu chính</h3>
+                        <ul class="space-y-4 text-slate-600">
+                            <li class="flex items-start"><svg class="w-6 h-6 text-teal-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span data-lang-key="achievement1">Ngành năng lượng duy trì tăng trưởng ổn định.</span></li>
+                            <li class="flex items-start"><svg class="w-6 h-6 text-teal-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span data-lang-key="achievement2">Cơ bản bảo đảm an ninh năng lượng quốc gia.</span></li>
+                            <li class="flex items-start"><svg class="w-6 h-6 text-teal-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span data-lang-key="achievement3">Đáp ứng yêu cầu phát triển kinh tế-xã hội và đời sống người dân.</span></li>
+                            <li class="flex items-start"><svg class="w-6 h-6 text-teal-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span data-lang-key="achievement4">Năng lượng tái tạo có bước phát triển đột phá.</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-amber-400">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-4" data-lang-key="limitationsTitle">Hạn chế & Thách thức</h3>
+                        <ul class="space-y-4 text-slate-600">
+                            <li class="flex items-start"><svg class="w-6 h-6 text-amber-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg><span data-lang-key="limitation1">Nhiều chỉ tiêu của Nghị quyết 55 khó đạt được.</span></li>
+                            <li class="flex items-start"><svg class="w-6 h-6 text-amber-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg><span data-lang-key="limitation2">Thể chế, chính sách quản lý còn bất cập, thiếu đồng bộ.</span></li>
+                            <li class="flex items-start"><svg class="w-6 h-6 text-amber-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg><span data-lang-key="limitation3">Tiến độ nhiều dự án điện, năng lượng trọng điểm còn chậm.</span></li>
+                            <li class="flex items-start"><svg class="w-6 h-6 text-amber-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg><span data-lang-key="limitation4">Tiềm năng năng lượng, đặc biệt là năng lượng tái tạo, chưa được khai thác hiệu quả.</span></li>
+                            <li class="flex items-start"><svg class="w-6 h-6 text-amber-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg><span data-lang-key="limitation5">Hạ tầng lưới điện chưa đáp ứng được tốc độ phát triển nguồn điện.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-sky-800 mb-6 text-center" data-lang-key="criticalIssuesTitle">4 Vấn đề Nan giải của Ngành Điện</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-red-50 p-6 rounded-xl border-l-4 border-red-400">
+                            <h4 class="text-lg font-bold text-red-900 mb-2" data-lang-key="issue1Title">1. Thiếu điện cục bộ, căng thẳng</h4>
+                            <p class="text-slate-600" data-lang-key="issue1Desc">Thiếu nguồn điện nền linh hoạt và lưới truyền tải yếu gây thiếu điện ở miền Bắc vào cao điểm, dù tổng công suất toàn hệ thống không thiếu.</p>
+                        </div>
+                        <div class="bg-yellow-50 p-6 rounded-xl border-l-4 border-yellow-400">
+                            <h4 class="text-lg font-bold text-yellow-900 mb-2" data-lang-key="issue2Title">2. Giá điện chưa theo thị trường</h4>
+                            <p class="text-slate-600" data-lang-key="issue2Desc">Giá bán lẻ chưa phản ánh đủ chi phí, gây khó khăn tài chính cho EVN và không thu hút được đầu tư tư nhân.</p>
+                        </div>
+                        <div class="bg-blue-50 p-6 rounded-xl border-l-4 border-blue-400">
+                            <h4 class="text-lg font-bold text-blue-900 mb-2" data-lang-key="issue3Title">3. Thủ tục đầu tư phức tạp</h4>
+                            <p class="text-slate-600" data-lang-key="issue3Desc">Quy trình pháp lý rườm rà làm chậm tiến độ các dự án điện, đặc biệt là các dự án năng lượng tái tạo và lưới điện.</p>
+                        </div>
+                        <div class="bg-purple-50 p-6 rounded-xl border-l-4 border-purple-400">
+                            <h4 class="text-lg font-bold text-purple-900 mb-2" data-lang-key="issue4Title">4. Hạ tầng lưới điện quá tải</h4>
+                            <p class="text-slate-600" data-lang-key="issue4Desc">Bùng nổ năng lượng tái tạo gây áp lực lớn lên hệ thống truyền tải, dẫn đến quá tải và phải cắt giảm công suất.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="goals" class="py-16 md:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-sky-900" data-lang-key="goalsTitle">Tầm nhìn và Mục tiêu của Nghị quyết 70</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600" data-lang-key="goalsSubtitle">Các chỉ tiêu định lượng rõ ràng cho một hệ thống năng lượng quốc gia hiện đại, bền vững và công bằng đến năm 2030.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="kpi-card p-6 rounded-2xl shadow-lg text-center bg-white">
+                        <p class="text-lg font-medium text-slate-700" data-lang-key="kpi1Title">Tổng cung năng lượng sơ cấp</p>
+                        <p class="text-5xl font-extrabold text-sky-900 my-2">175-195</p>
+                        <p class="text-slate-600" data-lang-key="kpi1Unit">triệu tấn dầu tương đương (MTOE)</p>
+                    </div>
+                    <div class="kpi-card p-6 rounded-2xl shadow-lg text-center bg-white">
+                         <p class="text-lg font-medium text-slate-700" data-lang-key="kpi2Title">Mục tiêu tiết kiệm năng lượng</p>
+                        <p class="text-5xl font-extrabold text-sky-900 my-2">8-10%</p>
+                        <p class="text-slate-600" data-lang-key="kpi2Unit">so với kịch bản phát triển thông thường</p>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8 items-center">
+                    <div class="bg-white p-8 rounded-2xl shadow-lg">
+                        <h3 class="text-2xl font-bold text-center text-sky-800 mb-4" data-lang-key="chart1Title">Tỷ trọng Năng lượng Tái tạo</h3>
+                        <div class="chart-container">
+                            <canvas id="renewableEnergyChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-lg">
+                        <h3 class="text-2xl font-bold text-center text-sky-800 mb-4" data-lang-key="chart2Title">Giảm phát thải Khí nhà kính</h3>
+                        <div class="chart-container">
+                            <canvas id="emissionReductionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-12 text-center bg-sky-800 text-white p-10 rounded-2xl shadow-xl">
+                    <h3 class="text-2xl font-bold mb-2" data-lang-key="visionTitle">Tầm nhìn đến 2045</h3>
+                    <p class="max-w-3xl mx-auto text-sky-200" data-lang-key="visionDesc">Xây dựng hệ sinh thái năng lượng tổng thể dựa trên năng lượng tái tạo và năng lượng mới, đảm bảo vững chắc an ninh năng lượng và đạt mục tiêu phát thải ròng bằng "0" vào năm 2050.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="solutions" class="py-16 md:py-24 bg-slate-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-sky-900" data-lang-key="solutionsTitle">Giải pháp Trọng tâm theo Nghị quyết 70</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600" data-lang-key="solutionsSubtitle">Bốn nhóm nhiệm vụ chiến lược được đề ra để hiện thực hóa các mục tiêu.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <div id="solutions-tabs-container">
+                        <div class="border-b border-slate-200">
+                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                <button class="solution-tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" data-tab="solution-tab1" data-lang-key="solutionTab1">
+                                    Thể chế & Chính sách
+                                </button>
+                                <button class="solution-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" data-tab="solution-tab2" data-lang-key="solutionTab2">
+                                    Phát triển Hạ tầng
+                                </button>
+                                <button class="solution-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" data-tab="solution-tab3" data-lang-key="solutionTab3">
+                                    Khoa học & Công nghệ
+                                </button>
+                                <button class="solution-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" data-tab="solution-tab4" data-lang-key="solutionTab4">
+                                    Hợp tác Quốc tế
+                                </button>
+                            </nav>
+                        </div>
+                        <div class="py-6">
+                            <div id="solution-tab1" class="solution-tab-content">
+                                <ul class="space-y-3 text-slate-600 list-disc list-inside">
+                                    <li data-lang-key="solution1_1">Xây dựng, hoàn thiện Luật Năng lượng tái tạo, hướng dẫn triển khai Luật Điện lực (sửa đổi), Luật Dầu khí (sửa đổi)...</li>
+                                    <li data-lang-key="solution1_2">Đổi mới cơ chế, chính sách giá năng lượng theo nguyên tắc thị trường, có sự điều tiết của Nhà nước.</li>
+                                    <li data-lang-key="solution1_3">Tách bạch vai trò quản lý nhà nước và vai trò sản xuất, kinh doanh của doanh nghiệp.</li>
+                                    <li data-lang-key="solution1_4">Xây dựng cơ chế đột phá để khuyến khích đầu tư vào các dự án năng lượng, đặc biệt là năng lượng sạch.</li>
+                                </ul>
+                            </div>
+                            <div id="solution-tab2" class="solution-tab-content hidden">
+                               <ul class="space-y-3 text-slate-600 list-disc list-inside">
+                                    <li data-lang-key="solution2_1">Đa dạng hoá nguồn cung năng lượng (trong nước và nhập khẩu), giảm phụ thuộc.</li>
+                                    <li data-lang-key="solution2_2">Đẩy nhanh tiến độ các dự án năng lượng trọng điểm, đặc biệt là nguồn và lưới điện.</li>
+                                    <li data-lang-key="solution2_3">Phát triển công nghiệp khí, ưu tiên hạ tầng nhập khẩu và tiêu thụ LNG.</li>
+                                    <li data-lang-key="solution2_4">Xây dựng hệ thống dự trữ năng lượng chiến lược (dầu thô, xăng dầu, khí đốt, than).</li>
+                                </ul>
+                            </div>
+                            <div id="solution-tab3" class="solution-tab-content hidden">
+                                <ul class="space-y-3 text-slate-600 list-disc list-inside">
+                                    <li data-lang-key="solution3_1">Tập trung đầu tư cho nghiên cứu và phát triển (R&D) với tỉ lệ tối thiểu 2% GDP ngành năng lượng.</li>
+                                    <li data-lang-key="solution3_2">Đẩy mạnh ứng dụng, chuyển giao công nghệ tiên tiến, chuyển đổi số trong toàn ngành.</li>
+                                    <li data-lang-key="solution3_3">Phát triển công nghệ lưu trữ năng lượng, lưới điện thông minh, hệ thống quản lý năng lượng thông minh.</li>
+                                    <li data-lang-key="solution3_4">Xây dựng đề án đẩy mạnh phát triển nguồn nhân lực chất lượng cao, ưu tiên cho năng lượng hạt nhân, năng lượng mới.</li>
+                                </ul>
+                            </div>
+                             <div id="solution-tab4" class="solution-tab-content hidden">
+                               <ul class="space-y-3 text-slate-600 list-disc list-inside">
+                                    <li data-lang-key="solution4_1">Mở rộng và làm sâu sắc hơn quan hệ hợp tác quốc tế về năng lượng với các đối tác quan trọng.</li>
+                                    <li data-lang-key="solution4_2">Tích cực tham gia các sáng kiến, cam kết quốc tế về chuyển dịch năng lượng, giảm phát thải.</li>
+                                    <li data-lang-key="solution4_3">Chủ động kế hoạch nhập khẩu điện từ các quốc gia láng giềng.</li>
+                                    <li data-lang-key="solution4_4">Thúc đẩy hợp tác, kết nối lưới điện ASEAN và khu vực.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="implementation" class="py-16 md:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-sky-900" data-lang-key="implementationTitle">Tổ chức Thực hiện</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600" data-lang-key="implementationSubtitle">Nghị quyết phân công nhiệm vụ rõ ràng cho các cơ quan, đơn vị để đảm bảo việc triển khai được thực hiện một cách đồng bộ, quyết liệt và hiệu quả.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="font-bold text-sky-800 text-lg mb-2" data-lang-key="implRole1Title">Đảng đoàn Quốc hội</h3>
+                        <p class="text-slate-600" data-lang-key="implRole1Desc">Lãnh đạo, chỉ đạo việc rà soát, sửa đổi, bổ sung và ban hành mới các luật liên quan để tạo hành lang pháp lý thuận lợi cho phát triển năng lượng.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="font-bold text-sky-800 text-lg mb-2" data-lang-key="implRole2Title">Ban cán sự đảng Chính phủ</h3>
+                        <p class="text-slate-600" data-lang-key="implRole2Desc">Chỉ đạo xây dựng và triển khai Chương trình hành động, thể chế hóa các nội dung của Nghị quyết, điều chỉnh Quy hoạch điện VIII và ưu tiên bố trí nguồn lực.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="font-bold text-sky-800 text-lg mb-2" data-lang-key="implRole3Title">Mặt trận Tổ quốc & Đoàn thể</h3>
+                        <p class="text-slate-600" data-lang-key="implRole3Desc">Phát huy vai trò giám sát, phản biện xã hội, tham gia xây dựng pháp luật, cơ chế, chính sách về bảo đảm an ninh năng lượng quốc gia.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="font-bold text-sky-800 text-lg mb-2" data-lang-key="implRole4Title">Ban Tuyên giáo & Dân vận TW</h3>
+                        <p class="text-slate-600" data-lang-key="implRole4Desc">Chủ trì, phối hợp hướng dẫn việc quán triệt, tuyên truyền, phổ biến sâu rộng nội dung Nghị quyết trong toàn hệ thống chính trị và nhân dân.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg lg:col-span-2">
+                        <h3 class="font-bold text-sky-800 text-lg mb-2" data-lang-key="implRole5Title">Ban Chính sách, chiến lược TW</h3>
+                        <p class="text-slate-600" data-lang-key="implRole5Desc">Chủ trì, phối hợp với các cơ quan liên quan thường xuyên theo dõi, kiểm tra, giám sát, đôn đốc việc triển khai; định kỳ sơ kết, tổng kết và báo cáo Bộ Chính trị.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="expert-solutions" class="py-16 md:py-24 bg-slate-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-sky-900" data-lang-key="expertSolutionsTitle">Lời giải từ Chuyên gia: 4 Điểm Mấu chốt</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                        <a href="https://dantri.com.vn/tam-diem/loi-giai-cho-4-van-de-nan-giai-cua-nganh-dien-viet-nam-20250907222032858.htm" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline font-semibold" data-lang-key="expertSolutionsLink">Bài báo</a>
+                        <span data-lang-key="expertSolutionsSubtitle"> cũng đề xuất 4 hướng đi chiến lược để tháo gỡ các vấn đề nan giải.</span>
+                    </p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <div id="expert-tabs-container">
+                        <div class="border-b border-slate-200">
+                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                <button class="expert-tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" data-tab="expert-tab1" data-lang-key="expertTab1">
+                                    Thiết kế Thị trường
+                                </button>
+                                <button class="expert-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" data-tab="expert-tab2" data-lang-key="expertTab2">
+                                    Quản trị Độc lập
+                                </button>
+                                <button class="expert-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" data-tab="expert-tab3" data-lang-key="expertTab3">
+                                    Phát triển Con người
+                                </button>
+                                <button class="expert-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" data-tab="expert-tab4" data-lang-key="expertTab4">
+                                    Ưu tiên Cải cách
+                                </button>
+                            </nav>
+                        </div>
+                        <div class="py-6">
+                            <div id="expert-tab1" class="expert-tab-content">
+                                <p class="text-slate-600 text-lg" data-lang-key="expertTab1Desc">Xây dựng cơ chế phù hợp với tỷ trọng năng lượng tái tạo cao, bao gồm xem xét các cơ chế quản lý công suất mới và cấu trúc hợp đồng mua bán điện dài hạn (PPA) phù hợp cho từng loại công nghệ.</p>
+                            </div>
+                            <div id="expert-tab2" class="expert-tab-content hidden">
+                               <p class="text-slate-600 text-lg" data-lang-key="expertTab2Desc">Cần xây dựng cơ cấu quản trị hiệu quả và độc lập cho thị trường điện, với các cơ quan tham mưu chính sách, thiết kế, điều tiết hoạt động độc lập, có đủ thẩm quyền và nguồn lực.</p>
+                            </div>
+                            <div id="expert-tab3" class="expert-tab-content hidden">
+                                <p class="text-slate-600 text-lg" data-lang-key="expertTab3Desc">Việc xây dựng đội ngũ lãnh đạo và nhân lực có kiến thức chuyên sâu về thị trường điện và chuyển đổi năng lượng bền vững, thông qua các chính sách đãi ngộ hấp dẫn và chương trình đào tạo liên ngành, là cần thiết để quản lý thành công công cuộc cải cách phức tạp này.</p>
+                            </div>
+                             <div id="expert-tab4" class="expert-tab-content hidden">
+                               <p class="text-slate-600 text-lg" data-lang-key="expertTab4Desc">Cấp bách thực hiện cải cách thị trường điện. Các dự án thuộc chương trình cải cách này cần được xem xét là dự án phát triển điện lực cấp bách, quan trọng, cần ưu tiên hàng đầu.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ai-analysis" class="py-16 md:py-24">
+             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-sky-900" data-lang-key="aiAnalysisTitle">Phân tích Chuyên sâu với AI</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600" data-lang-key="aiAnalysisSubtitle">Sử dụng mô hình ngôn ngữ lớn để có cái nhìn sâu sắc và đa chiều về Nghị quyết.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="text-center md:text-left">
+                             <h3 class="text-2xl font-bold text-sky-800 mb-2" data-lang-key="aiSummaryTitle">Tóm tắt Thông minh</h3>
+                             <p class="text-slate-600 mb-4" data-lang-key="aiSummaryDesc">Nhận ngay một bản tóm tắt súc tích, kết nối các mục tiêu của Nghị quyết, thách thức thực tiễn và giải pháp từ chuyên gia.</p>
+                             <button id="smart-summary-btn" class="bg-sky-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-sky-700 transition-all duration-300">
+                                <span data-lang-key="aiSummaryButton">✨ Yêu cầu Tóm tắt</span>
+                            </button>
+                        </div>
+                        <div>
+                             <h3 class="text-2xl font-bold text-sky-800 mb-4 text-center" data-lang-key="aiImpactTitle">Phân tích Tác động</h3>
+                             <div class="flex justify-center flex-wrap gap-4 mb-4">
+                                <button class="impact-btn bg-slate-100 border border-slate-200 text-slate-700 font-semibold py-2 px-5 rounded-full hover:bg-sky-100 transition" data-stakeholder="Households" data-lang-key="impactBtn1">Hộ gia đình</button>
+                                <button class="impact-btn bg-slate-100 border border-slate-200 text-slate-700 font-semibold py-2 px-5 rounded-full hover:bg-sky-100 transition" data-stakeholder="Manufacturing Enterprises" data-lang-key="impactBtn2">Doanh nghiệp sản xuất</button>
+                                <button class="impact-btn bg-slate-100 border border-slate-200 text-slate-700 font-semibold py-2 px-5 rounded-full hover:bg-sky-100 transition" data-stakeholder="Energy Investors" data-lang-key="impactBtn3">Nhà đầu tư năng lượng</button>
+                            </div>
+                            <div id="impact-analysis-result" class="bg-slate-50 min-h-[150px] p-6 rounded-lg shadow-inner flex items-center justify-center text-slate-500" data-lang-key="impactPlaceholder">
+                                Hãy chọn một nhóm để bắt đầu phân tích.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </section>
+    </main>
+    
+    <footer class="bg-sky-900 text-sky-200">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center">
+            <p data-lang-key="footerText">&copy; 2025 - Phân tích Nghị quyết 70-NQ/TW. Trang web được tạo cho mục đích tham khảo thông tin, thuộc bản quyền của TDC.</p>
+        </div>
+    </footer>
+
+
+    <!-- Gemini Modal -->
+    <div id="gemini-summary-modal" class="gemini-modal fixed inset-0 bg-black bg-opacity-60 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full p-6 md:p-8 relative transform transition-all duration-300 scale-95" id="gemini-modal-content">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-slate-500 hover:text-slate-800 text-2xl">&times;</button>
+            <h2 class="text-2xl font-bold text-sky-900 mb-4" data-lang-key="modalTitle">✨ Tóm tắt từ Gemini</h2>
+            <div id="summary-content" class="text-slate-600 space-y-3">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentLang = 'vi';
+            const translations = {
+                // English Translations
+                en: {
+                    pageTitle: "Analysis of Resolution 70-NQ/TW on National Energy Security",
+                    resolutionTitle: "Resolution 70-NQ/TW",
+                    navChallenges: "Challenges",
+                    navGoals: "Goals",
+                    navSolutions: "NQ70 Solutions",
+                    navImplementation: "Implementation",
+                    navExpertSolutions: "Expert Solutions",
+                    navAIAnalysis: "AI Analysis",
+                    navChallengesMobile: "Challenges",
+                    navGoalsMobile: "Goals",
+                    navSolutionsMobile: "NQ70 Solutions",
+                    navImplementationMobile: "Implementation",
+                    navExpertSolutionsMobile: "Expert Solutions",
+                    navAIAnalysisMobile: "AI Analysis",
+                    heroTitle: "National Energy Security",
+                    heroSubtitle: "A comprehensive analysis of Resolution 70-NQ/TW: From strategies and goals to breakthrough solutions for Vietnam's energy sector towards a sustainable future.",
+                    heroButton: "Explore Analysis",
+                    challengesTitle: "Context & Challenges",
+                    challengesSubtitle: "The energy sector has achieved many successes but still faces deep-rooted issues that require strategic solutions.",
+                    achievementsTitle: "Key Achievements",
+                    achievement1: "The energy sector has maintained stable growth.",
+                    achievement2: "National energy security has been fundamentally ensured.",
+                    achievement3: "It has met the demands of socio-economic development and people's livelihoods.",
+                    achievement4: "Renewable energy has made breakthrough progress.",
+                    limitationsTitle: "Limitations & Challenges",
+                    limitation1: "Many targets of Resolution 55 are difficult to achieve.",
+                    limitation2: "Institutions and management policies are inadequate and lack synchronization.",
+                    limitation3: "The progress of many key power and energy projects is slow.",
+                    limitation4: "Energy potential, especially renewable energy, has not been effectively exploited.",
+                    limitation5: "The power grid infrastructure has not kept pace with the development of new power sources.",
+                    criticalIssuesTitle: "4 Critical Issues of the Power Sector",
+                    issue1Title: "1. Localized, severe power shortages",
+                    issue1Desc: "Lack of flexible baseload power and a weak transmission grid cause shortages in the North during peak seasons, despite sufficient total system capacity.",
+                    issue2Title: "2. Non-market-based electricity prices",
+                    issue2Desc: "Retail prices do not fully reflect input costs, causing financial difficulties for EVN and discouraging private investment.",
+                    issue3Title: "3. Complex investment procedures",
+                    issue3Desc: "Cumbersome legal and administrative processes delay power projects, especially renewable energy and grid projects.",
+                    issue4Title: "4. Overloaded grid infrastructure",
+                    issue4Desc: "The boom in renewables has placed immense pressure on the transmission system, leading to overloads and capacity curtailment.",
+                    goalsTitle: "Vision and Goals of Resolution 70",
+                    goalsSubtitle: "Clear quantitative targets for a modern, sustainable, and equitable national energy system by 2030.",
+                    kpi1Title: "Total Primary Energy Supply",
+                    kpi1Unit: "million tonnes of oil equivalent (MTOE)",
+                    kpi2Title: "Energy Saving Target",
+                    kpi2Unit: "compared to the business-as-usual scenario",
+                    chart1Title: "Renewable Energy Share",
+                    chart2Title: "Greenhouse Gas Emission Reduction",
+                    visionTitle: "Vision to 2045",
+                    visionDesc: "To build a comprehensive energy ecosystem based on renewable and new energy, ensuring robust energy security and achieving the goal of net-zero emissions by 2050.",
+                    solutionsTitle: "Key Solutions per Resolution 70",
+                    solutionsSubtitle: "Four strategic task groups are outlined to realize the goals.",
+                    solutionTab1: "Institutions & Policies",
+                    solutionTab2: "Infrastructure Development",
+                    solutionTab3: "Science & Technology",
+                    solutionTab4: "International Cooperation",
+                    solution1_1: "Develop and perfect laws on Renewable Energy, Guidelines for implementing the Electricity Law (amended), and Oil & Gas Law (amended).",
+                    solution1_2: "Reform energy pricing mechanisms based on market principles with State regulation.",
+                    solution1_3: "Clearly separate the roles of state management and business production/operation.",
+                    solution1_4: "Create breakthrough mechanisms to encourage investment in energy projects, especially clean energy.",
+                    solution2_1: "Diversify energy supply sources (domestic and imported) to reduce dependence.",
+                    solution2_2: "Accelerate the progress of key energy projects, especially power sources and the grid.",
+                    solution2_3: "Develop the gas industry, prioritizing infrastructure for LNG import and consumption.",
+                    solution2_4: "Establish a strategic energy reserve system (crude oil, petroleum, gas, coal).",
+                    solution3_1: "Focus investment on research and development (R&D) at a minimum rate of 2% of the energy sector's GDP.",
+                    solution3_2: "Promote the application and transfer of advanced technologies and digital transformation throughout the sector.",
+                    solution3_3: "Develop energy storage technology, smart grids, and smart energy management systems.",
+                    solution3_4: "Develop a plan to enhance high-quality human resources, prioritizing nuclear and new energy.",
+                    solution4_1: "Expand and deepen international cooperation in energy with key partners.",
+                    solution4_2: "Actively participate in international initiatives and commitments on energy transition and emission reduction.",
+                    solution4_3: "Proactively plan for electricity imports from neighboring countries.",
+                    solution4_4: "Promote cooperation and connection with the ASEAN power grid and the region.",
+                    implementationTitle: "Implementation Organization",
+                    implementationSubtitle: "The Resolution assigns clear responsibilities to agencies and units to ensure implementation is synchronous, decisive, and effective.",
+                    implRole1Title: "National Assembly Party Caucus",
+                    implRole1Desc: "Lead and direct the review, amendment, and enactment of related laws to create a favorable legal framework for energy development.",
+                    implRole2Title: "Government Party Committee",
+                    implRole2Desc: "Direct the development and implementation of an action program, institutionalize the Resolution's content, adjust Power Development Plan VIII, and prioritize resource allocation.",
+                    implRole3Title: "Fatherland Front & Mass Organizations",
+                    implRole3Desc: "Promote their role in social supervision and critique, participating in the development of laws and policies on national energy security.",
+                    implRole4Title: "Central Propaganda & Mass Mobilization Commissions",
+                    implRole4Desc: "Lead and coordinate guidance on studying and disseminating the Resolution's content throughout the political system and the public.",
+                    implRole5Title: "Central Policy and Strategy Commission",
+                    implRole5Desc: "Lead and coordinate with relevant agencies to regularly monitor, inspect, and supervise the implementation; periodically review and report to the Politburo.",
+                    expertSolutionsTitle: "Expert Solutions: 4 Key Points",
+                    expertSolutionsLink: "An article",
+                    expertSolutionsSubtitle: " also proposes four strategic directions to resolve critical issues.",
+                    expertTab1: "Market Redesign",
+                    expertTab2: "Independent Governance",
+                    expertTab3: "Human Capital Development",
+                    expertTab4: "Prioritize Reform",
+                    expertTab1Desc: "Develop mechanisms suitable for a high proportion of renewable energy, including new capacity management mechanisms and long-term Power Purchase Agreements (PPAs) tailored to each technology.",
+                    expertTab2Desc: "Build an effective and independent governance structure for the electricity market, with independent policy advisory, design, and regulatory bodies that have sufficient authority and resources.",
+                    expertTab3Desc: "Develop a team of leaders and personnel with deep expertise in electricity markets and sustainable energy transition through attractive compensation policies and interdisciplinary training programs.",
+                    expertTab4Desc: "Urgently implement electricity market reforms. Projects under this reform program should be considered urgent, critical power development projects and given top priority.",
+                    aiAnalysisTitle: "In-depth Analysis with AI",
+                    aiAnalysisSubtitle: "Use a large language model to get deep and multifaceted insights into the Resolution.",
+                    aiSummaryTitle: "Smart Summary",
+                    aiSummaryDesc: "Get a concise summary connecting the Resolution's goals, practical challenges, and expert solutions.",
+                    aiSummaryButton: "✨ Request Summary",
+                    aiImpactTitle: "Impact Analysis",
+                    impactBtn1: "Households",
+                    impactBtn2: "Manufacturing Enterprises",
+                    impactBtn3: "Energy Investors",
+                    impactPlaceholder: "Select a group to start the analysis.",
+                    footerText: "© 2025 - Analysis of Resolution 70-NQ/TW. This website was created for informational purposes, copyrighted by TDC.",
+                    modalTitle: "✨ Summary from Gemini",
+                    chartRenewableLabel: "Renewable Energy",
+                    chartOtherLabel: "Other Sources",
+                    chartRenewableTitle: "Target of 25-30% in total primary energy supply",
+                    chartEmissionLabel1: "Domestic Efforts",
+                    chartEmissionLabel2: ["With International", "Support"],
+                    chartEmissionTitle: "Compared to Business-As-Usual (BAU) scenario",
+                    summaryPrompt: "Based on Resolution 70-NQ/TW, the 4 critical issues of the power sector, and the 4 key solutions from experts, provide a concise summary (around 150-200 words) of the overall picture. It should connect the Resolution's goals (like 25-30% renewable energy) with the practical challenges (electricity price, grid infrastructure...) and the proposed reforms (market redesign, independent governance...) to show a comprehensive roadmap.",
+                    impactPrompt: `Analyze the impact of Resolution 70-NQ/TW on "{stakeholder}" in Vietnam. Connect the Resolution's goals (25-30% renewable energy, 15-35% emission reduction) with the resolution of the 4 practical problems (shortages, price, procedures, grid) and the 4 expert solutions (market redesign, governance, human capital, urgent reform) to analyze the opportunities and challenges they will face. Present in concise bullet points.`
+                },
+                // Vietnamese Translations
+                vi: {
+                    pageTitle: "Phân tích Nghị quyết 70-NQ/TW về An ninh Năng lượng Quốc gia",
+                    resolutionTitle: "Nghị quyết 70-NQ/TW",
+                    navChallenges: "Thách thức",
+                    navGoals: "Mục tiêu",
+                    navSolutions: "Giải pháp NQ70",
+                    navImplementation: "Tổ chức Thực hiện",
+                    navExpertSolutions: "Giải pháp Chuyên gia",
+                    navAIAnalysis: "Phân tích AI",
+                    navChallengesMobile: "Thách thức",
+                    navGoalsMobile: "Mục tiêu",
+                    navSolutionsMobile: "Giải pháp NQ70",
+                    navImplementationMobile: "Tổ chức Thực hiện",
+                    navExpertSolutionsMobile: "Giải pháp Chuyên gia",
+                    navAIAnalysisMobile: "Phân tích AI",
+                    heroTitle: "An ninh Năng lượng Quốc gia",
+                    heroSubtitle: "Phân tích toàn diện Nghị quyết 70-NQ/TW: Từ chiến lược, mục tiêu đến các giải pháp đột phá cho ngành năng lượng Việt Nam hướng tới tương lai bền vững.",
+                    heroButton: "Khám phá Phân tích",
+                    challengesTitle: "Bối cảnh & Thách thức",
+                    challengesSubtitle: "Ngành năng lượng đã đạt nhiều thành tựu nhưng vẫn đối mặt với những vấn đề cố hữu, đòi hỏi các giải pháp mang tính chiến lược.",
+                    achievementsTitle: "Thành tựu chính",
+                    achievement1: "Ngành năng lượng duy trì tăng trưởng ổn định.",
+                    achievement2: "Cơ bản bảo đảm an ninh năng lượng quốc gia.",
+                    achievement3: "Đáp ứng yêu cầu phát triển kinh tế-xã hội và đời sống người dân.",
+                    achievement4: "Năng lượng tái tạo có bước phát triển đột phá.",
+                    limitationsTitle: "Hạn chế & Thách thức",
+                    limitation1: "Nhiều chỉ tiêu của Nghị quyết 55 khó đạt được.",
+                    limitation2: "Thể chế, chính sách quản lý còn bất cập, thiếu đồng bộ.",
+                    limitation3: "Tiến độ nhiều dự án điện, năng lượng trọng điểm còn chậm.",
+                    limitation4: "Tiềm năng năng lượng, đặc biệt là năng lượng tái tạo, chưa được khai thác hiệu quả.",
+                    limitation5: "Hạ tầng lưới điện chưa đáp ứng được tốc độ phát triển nguồn điện.",
+                    criticalIssuesTitle: "4 Vấn đề Nan giải của Ngành Điện",
+                    issue1Title: "1. Thiếu điện cục bộ, căng thẳng",
+                    issue1Desc: "Thiếu nguồn điện nền linh hoạt và lưới truyền tải yếu gây thiếu điện ở miền Bắc vào cao điểm, dù tổng công suất toàn hệ thống không thiếu.",
+                    issue2Title: "2. Giá điện chưa theo thị trường",
+                    issue2Desc: "Giá bán lẻ chưa phản ánh đủ chi phí, gây khó khăn tài chính cho EVN và không thu hút được đầu tư tư nhân.",
+                    issue3Title: "3. Thủ tục đầu tư phức tạp",
+                    issue3Desc: "Quy trình pháp lý rườm rà làm chậm tiến độ các dự án điện, đặc biệt là các dự án năng lượng tái tạo và lưới điện.",
+                    issue4Title: "4. Hạ tầng lưới điện quá tải",
+                    issue4Desc: "Bùng nổ năng lượng tái tạo gây áp lực lớn lên hệ thống truyền tải, dẫn đến quá tải và phải cắt giảm công suất.",
+                    goalsTitle: "Tầm nhìn và Mục tiêu của Nghị quyết 70",
+                    goalsSubtitle: "Các chỉ tiêu định lượng rõ ràng cho một hệ thống năng lượng quốc gia hiện đại, bền vững và công bằng đến năm 2030.",
+                    kpi1Title: "Tổng cung năng lượng sơ cấp",
+                    kpi1Unit: "triệu tấn dầu tương đương (MTOE)",
+                    kpi2Title: "Mục tiêu tiết kiệm năng lượng",
+                    kpi2Unit: "so với kịch bản phát triển thông thường",
+                    chart1Title: "Tỷ trọng Năng lượng Tái tạo",
+                    chart2Title: "Giảm phát thải Khí nhà kính",
+                    visionTitle: "Tầm nhìn đến 2045",
+                    visionDesc: "Xây dựng hệ sinh thái năng lượng tổng thể dựa trên năng lượng tái tạo và năng lượng mới, đảm bảo vững chắc an ninh năng lượng và đạt mục tiêu phát thải ròng bằng \"0\" vào năm 2050.",
+                    solutionsTitle: "Giải pháp Trọng tâm theo Nghị quyết 70",
+                    solutionsSubtitle: "Bốn nhóm nhiệm vụ chiến lược được đề ra để hiện thực hóa các mục tiêu.",
+                    solutionTab1: "Thể chế & Chính sách",
+                    solutionTab2: "Phát triển Hạ tầng",
+                    solutionTab3: "Khoa học & Công nghệ",
+                    solutionTab4: "Hợp tác Quốc tế",
+                    solution1_1: "Xây dựng, hoàn thiện Luật Năng lượng tái tạo, hướng dẫn triển khai Luật Điện lực (sửa đổi), Luật Dầu khí (sửa đổi)...",
+                    solution1_2: "Đổi mới cơ chế, chính sách giá năng lượng theo nguyên tắc thị trường, có sự điều tiết của Nhà nước.",
+                    solution1_3: "Tách bạch vai trò quản lý nhà nước và vai trò sản xuất, kinh doanh của doanh nghiệp.",
+                    solution1_4: "Xây dựng cơ chế đột phá để khuyến khích đầu tư vào các dự án năng lượng, đặc biệt là năng lượng sạch.",
+                    solution2_1: "Đa dạng hoá nguồn cung năng lượng (trong nước và nhập khẩu), giảm phụ thuộc.",
+                    solution2_2: "Đẩy nhanh tiến độ các dự án năng lượng trọng điểm, đặc biệt là nguồn và lưới điện.",
+                    solution2_3: "Phát triển công nghiệp khí, ưu tiên hạ tầng nhập khẩu và tiêu thụ LNG.",
+                    solution2_4: "Xây dựng hệ thống dự trữ năng lượng chiến lược (dầu thô, xăng dầu, khí đốt, than).",
+                    solution3_1: "Tập trung đầu tư cho nghiên cứu và phát triển (R&D) với tỉ lệ tối thiểu 2% GDP ngành năng lượng.",
+                    solution3_2: "Đẩy mạnh ứng dụng, chuyển giao công nghệ tiên tiến, chuyển đổi số trong toàn ngành.",
+                    solution3_3: "Phát triển công nghệ lưu trữ năng lượng, lưới điện thông minh, hệ thống quản lý năng lượng thông minh.",
+                    solution3_4: "Xây dựng đề án đẩy mạnh phát triển nguồn nhân lực chất lượng cao, ưu tiên cho năng lượng hạt nhân, năng lượng mới.",
+                    solution4_1: "Mở rộng và làm sâu sắc hơn quan hệ hợp tác quốc tế về năng lượng với các đối tác quan trọng.",
+                    solution4_2: "Tích cực tham gia các sáng kiến, cam kết quốc tế về chuyển dịch năng lượng, giảm phát thải.",
+                    solution4_3: "Chủ động kế hoạch nhập khẩu điện từ các quốc gia láng giềng.",
+                    solution4_4: "Thúc đẩy hợp tác, kết nối lưới điện ASEAN và khu vực.",
+                    implementationTitle: "Tổ chức Thực hiện",
+                    implementationSubtitle: "Nghị quyết phân công nhiệm vụ rõ ràng cho các cơ quan, đơn vị để đảm bảo việc triển khai được thực hiện một cách đồng bộ, quyết liệt và hiệu quả.",
+                    implRole1Title: "Đảng đoàn Quốc hội",
+                    implRole1Desc: "Lãnh đạo, chỉ đạo việc rà soát, sửa đổi, bổ sung và ban hành mới các luật liên quan để tạo hành lang pháp lý thuận lợi cho phát triển năng lượng.",
+                    implRole2Title: "Ban cán sự đảng Chính phủ",
+                    implRole2Desc: "Chỉ đạo xây dựng và triển khai Chương trình hành động, thể chế hóa các nội dung của Nghị quyết, điều chỉnh Quy hoạch điện VIII và ưu tiên bố trí nguồn lực.",
+                    implRole3Title: "Mặt trận Tổ quốc & Đoàn thể",
+                    implRole3Desc: "Phát huy vai trò giám sát, phản biện xã hội, tham gia xây dựng pháp luật, cơ chế, chính sách về bảo đảm an ninh năng lượng quốc gia.",
+                    implRole4Title: "Ban Tuyên giáo & Dân vận TW",
+                    implRole4Desc: "Chủ trì, phối hợp hướng dẫn việc quán triệt, tuyên truyền, phổ biến sâu rộng nội dung Nghị quyết trong toàn hệ thống chính trị và nhân dân.",
+                    implRole5Title: "Ban Chính sách, chiến lược TW",
+                    implRole5Desc: "Chủ trì, phối hợp với các cơ quan liên quan thường xuyên theo dõi, kiểm tra, giám sát, đôn đốc việc triển khai; định kỳ sơ kết, tổng kết và báo cáo Bộ Chính trị.",
+                    expertSolutionsTitle: "Lời giải từ Chuyên gia: 4 Điểm Mấu chốt",
+                    expertSolutionsLink: "Bài báo",
+                    expertSolutionsSubtitle: " cũng đề xuất 4 hướng đi chiến lược để tháo gỡ các vấn đề nan giải.",
+                    expertTab1: "Thiết kế Thị trường",
+                    expertTab2: "Quản trị Độc lập",
+                    expertTab3: "Phát triển Con người",
+                    expertTab4: "Ưu tiên Cải cách",
+                    expertTab1Desc: "Xây dựng cơ chế phù hợp với tỷ trọng năng lượng tái tạo cao, bao gồm xem xét các cơ chế quản lý công suất mới và cấu trúc hợp đồng mua bán điện dài hạn (PPA) phù hợp cho từng loại công nghệ.",
+                    expertTab2Desc: "Cần xây dựng cơ cấu quản trị hiệu quả và độc lập cho thị trường điện, với các cơ quan tham mưu chính sách, thiết kế, điều tiết hoạt động độc lập, có đủ thẩm quyền và nguồn lực.",
+                    expertTab3Desc: "Việc xây dựng đội ngũ lãnh đạo và nhân lực có kiến thức chuyên sâu về thị trường điện và chuyển đổi năng lượng bền vững, thông qua các chính sách đãi ngộ hấp dẫn và chương trình đào tạo liên ngành, là cần thiết để quản lý thành công công cuộc cải cách phức tạp này.",
+                    expertTab4Desc: "Cấp bách thực hiện cải cách thị trường điện. Các dự án thuộc chương trình cải cách này cần được xem xét là dự án phát triển điện lực cấp bách, quan trọng, cần ưu tiên hàng đầu.",
+                    aiAnalysisTitle: "Phân tích Chuyên sâu với AI",
+                    aiAnalysisSubtitle: "Sử dụng mô hình ngôn ngữ lớn để có cái nhìn sâu sắc và đa chiều về Nghị quyết.",
+                    aiSummaryTitle: "Tóm tắt Thông minh",
+                    aiSummaryDesc: "Nhận ngay một bản tóm tắt súc tích, kết nối các mục tiêu của Nghị quyết, thách thức thực tiễn và giải pháp từ chuyên gia.",
+                    aiSummaryButton: "✨ Yêu cầu Tóm tắt",
+                    aiImpactTitle: "Phân tích Tác động",
+                    impactBtn1: "Hộ gia đình",
+                    impactBtn2: "Doanh nghiệp sản xuất",
+                    impactBtn3: "Nhà đầu tư năng lượng",
+                    impactPlaceholder: "Hãy chọn một nhóm để bắt đầu phân tích.",
+                    footerText: "© 2025 - Phân tích Nghị quyết 70-NQ/TW. Trang web được tạo cho mục đích tham khảo thông tin, thuộc bản quyền của TDC.",
+                    modalTitle: "✨ Tóm tắt từ Gemini",
+                    chartRenewableLabel: "Năng lượng Tái tạo",
+                    chartOtherLabel: "Các nguồn khác",
+                    chartRenewableTitle: "Mục tiêu 25-30% trong tổng cung năng lượng sơ cấp",
+                    chartEmissionLabel1: "Tự nỗ lực",
+                    chartEmissionLabel2: ["Có hỗ trợ", "quốc tế"],
+                    chartEmissionTitle: "So với kịch bản phát triển thông thường (BAU)",
+                    summaryPrompt: "Dựa trên Nghị quyết 70-NQ/TW, 4 vấn đề nan giải của ngành điện và 4 giải pháp mấu chốt từ chuyên gia, hãy tóm tắt ngắn gọn (khoảng 150-200 từ) bức tranh toàn cảnh. Cần kết nối được các mục tiêu của Nghị quyết (như 25-30% NLTT) với các thách thức thực tế (giá điện, lưới điện...) và các đề xuất cải cách (thiết kế thị trường, quản trị độc lập...) để cho thấy một lộ trình toàn diện.",
+                    impactPrompt: `Phân tích tác động của Nghị quyết 70-NQ/TW đối với "{stakeholder}" ở Việt Nam. Hãy liên hệ các mục tiêu của Nghị quyết (25-30% NLTT, giảm phát thải 15-35%) với việc giải quyết 4 vấn đề thực tế (thiếu điện, giá, thủ tục, lưới điện) và 4 giải pháp từ chuyên gia (thiết kế thị trường, quản trị, nhân lực, cấp bách cải cách) để phân tích về cơ hội và thách thức mà họ đối mặt. Trình bày dưới dạng gạch đầu dòng ngắn gọn.`
+                }
+            };
+            
+            let renewableEnergyChart, emissionReductionChart;
+
+            const setLanguage = (lang) => {
+                currentLang = lang;
+                document.documentElement.lang = lang;
+                const langData = translations[lang];
+                
+                document.querySelectorAll('[data-lang-key]').forEach(el => {
+                    const key = el.dataset.langKey;
+                    if (langData[key]) {
+                        el.innerHTML = langData[key];
+                    }
+                });
+
+                // Update charts
+                if (renewableEnergyChart) {
+                    renewableEnergyChart.data.labels = [langData.chartRenewableLabel, langData.chartOtherLabel];
+                    renewableEnergyChart.options.plugins.title.text = langData.chartRenewableTitle;
+                    renewableEnergyChart.update();
+                }
+                if (emissionReductionChart) {
+                    emissionReductionChart.data.labels = [langData.chartEmissionLabel1, langData.chartEmissionLabel2];
+                    emissionReductionChart.options.plugins.title.text = langData.chartEmissionTitle;
+                    emissionReductionChart.update();
+                }
+                
+                // Update active language button
+                document.querySelectorAll('.lang-switch button').forEach(btn => btn.classList.remove('active'));
+                document.getElementById(`lang-${lang}`).classList.add('active');
+                document.getElementById(`lang-${lang}-mobile`).classList.add('active');
+            };
+
+            // Language switchers
+            ['lang-vi', 'lang-en', 'lang-vi-mobile', 'lang-en-mobile'].forEach(id => {
+                document.getElementById(id).addEventListener('click', () => {
+                    setLanguage(id.includes('en') ? 'en' : 'vi');
+                });
+            });
+
+            // Mobile Menu Toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // Active Nav Link on Scroll
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active-nav');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active-nav');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: "-30% 0px -70% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+
+            // Chart.js implementation
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                  return label.join(' ');
+                } else {
+                  return label;
+                }
+            };
+
+            const renewableCtx = document.getElementById('renewableEnergyChart').getContext('2d');
+            renewableEnergyChart = new Chart(renewableCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [], // To be populated by setLanguage
+                    datasets: [{
+                        data: [27.5, 72.5],
+                        backgroundColor: ['#0ea5e9', '#e0f2fe'],
+                        borderColor: '#ffffff',
+                        borderWidth: 4,
+                        hoverOffset: 10,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { callbacks: { title: tooltipTitleCallback } },
+                        title: { display: true, text: '', font: { size: 14 } }
+                    }
+                }
+            });
+
+            const emissionCtx = document.getElementById('emissionReductionChart').getContext('2d');
+            emissionReductionChart = new Chart(emissionCtx, {
+                type: 'bar',
+                data: {
+                    labels: [], // To be populated by setLanguage
+                    datasets: [{
+                        label: 'Reduction (%)',
+                        data: [15, 35],
+                        backgroundColor: ['#2dd4bf', '#38bdf8'],
+                        borderRadius: 8,
+                        barPercentage: 0.6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { title: tooltipTitleCallback } },
+                        title: { display: true, text: '', font: { size: 14 } }
+                    }
+                }
+            });
+
+            // Tab Logic Function
+            const setupTabs = (buttonClass, contentClass) => {
+                const tabButtons = document.querySelectorAll(`.${buttonClass}`);
+                const tabContents = document.querySelectorAll(`.${contentClass}`);
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        tabContents.forEach(content => {
+                            content.classList.add('hidden');
+                            if (content.id === button.dataset.tab) {
+                                content.classList.remove('hidden');
+                            }
+                        });
+                    });
+                });
+            };
+
+            setupTabs('solution-tab-button', 'solution-tab-content');
+            setupTabs('expert-tab-button', 'expert-tab-content');
+
+
+            // Gemini API Integration
+            const API_KEY = "AIzaSyAXEbxImpn5OS14Gt_6tqfoPm62ubug8Ok"; // PASTE YOUR GOOGLE AI STUDIO API KEY HERE
+            
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+            const LOADER_HTML = `<div class="loader mx-auto"></div>`;
+
+            const callGeminiAPI = async (prompt, retries = 3, delay = 1000) => {
+                 if (!API_KEY) {
+                    return currentLang === 'vi' 
+                        ? "Lỗi: API Key chưa được cung cấp. Vui lòng thêm API Key của bạn vào tệp HTML để sử dụng tính năng này."
+                        : "Error: API Key not provided. Please add your API Key to the HTML file to use this feature.";
+                }
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                };
+
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (text) return text;
+
+                    return currentLang === 'vi' ? "Không thể nhận được phản hồi. Vui lòng thử lại." : "Could not get a response. Please try again.";
+                } catch (error) {
+                    if (retries > 0) {
+                        await new Promise(res => setTimeout(res, delay));
+                        return callGeminiAPI(prompt, retries - 1, delay * 2);
+                    }
+                    console.error("Error calling Gemini API:", error);
+                     return currentLang === 'vi' 
+                        ? "Đã xảy ra lỗi khi kết nối đến AI. Vui lòng kiểm tra console để biết thêm chi tiết."
+                        : "An error occurred while connecting to the AI. Please check the console for details.";
+                }
+            };
+
+            // Smart Summary Modal Logic
+            const summaryBtns = document.querySelectorAll('#smart-summary-btn');
+            const modal = document.getElementById('gemini-summary-modal');
+            const modalContent = document.getElementById('gemini-modal-content');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const summaryContentDiv = document.getElementById('summary-content');
+
+            const openSummaryModal = async () => {
+                modal.classList.add('active');
+                modalContent.classList.add('scale-100');
+                summaryContentDiv.innerHTML = LOADER_HTML;
+                
+                const prompt = translations[currentLang].summaryPrompt;
+                const summaryText = await callGeminiAPI(prompt);
+                summaryContentDiv.innerHTML = summaryText.replace(/\n/g, '<br>');
+            }
+            
+            summaryBtns.forEach(btn => btn.addEventListener('click', openSummaryModal));
+
+            const closeModal = () => {
+                modalContent.classList.remove('scale-100');
+                modal.classList.remove('active');
+            }
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Impact Analysis Logic
+            const impactButtons = document.querySelectorAll('.impact-btn');
+            const impactResultDiv = document.getElementById('impact-analysis-result');
+            let activeImpactButton = null;
+
+            impactButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const stakeholder = button.dataset.stakeholder;
+                    const stakeholderText = button.innerText;
+
+                    if (activeImpactButton) {
+                        activeImpactButton.classList.remove('bg-sky-200');
+                        activeImpactButton.classList.add('bg-slate-100');
+                    }
+                    button.classList.add('bg-sky-200');
+                    button.classList.remove('bg-slate-100');
+                    activeImpactButton = button;
+
+                    impactResultDiv.innerHTML = LOADER_HTML;
+                    
+                    const promptTemplate = translations[currentLang].impactPrompt;
+                    const prompt = promptTemplate.replace('{stakeholder}', stakeholderText);
+
+                    const analysisText = await callGeminiAPI(prompt);
+                    impactResultDiv.innerHTML = `<div class="text-left w-full">${analysisText.replace(/\n/g, '<br>')}</div>`;
+                });
+            });
+
+            // Initial language setup
+            setLanguage('vi');
+        });
+    </script>
+</body>
+</html>
