@@ -1,2 +1,2 @@
-# nqtw70.github.io
+# nqtw70
 Vietnam Energy Security
